@@ -8,7 +8,7 @@ COMPILED_SCHEMAS = schemas/gschemas.compiled
 SRC = extension.js prefs.js metadata.json
 SCHEMA_DIR = schemas
 
-.PHONY: build install uninstall enable disable zip lint clean
+.PHONY: build install uninstall enable disable zip lint ci clean
 
 build: $(COMPILED_SCHEMAS)
 
@@ -49,6 +49,10 @@ lint:
 	@if command -v eslint >/dev/null 2>&1; then \
 		eslint $(SRC); \
 	fi
+
+ci: lint
+	python3 -c "import json; json.load(open('metadata.json')); print('metadata.json: valid')"
+	python3 -c "import xml.dom.minidom; xml.dom.minidom.parse('$(SCHEMAS)'); print('schema xml: valid')"
 
 clean:
 	rm -f $(COMPILED_SCHEMAS)
